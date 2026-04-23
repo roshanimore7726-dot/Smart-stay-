@@ -1,0 +1,115 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile information and role",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "role": { "type": "string", "enum": ["user", "owner", "vendor", "admin"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "Property": {
+      "title": "Property",
+      "description": "Accommodation listing details",
+      "type": "object",
+      "properties": {
+        "ownerId": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "type": { "type": "string", "enum": ["PG", "Room", "Flat"] },
+        "price": { "type": "number" },
+        "location": { "type": "object" },
+        "images": { "type": "array" },
+        "amenities": { "type": "array" },
+        "status": { "type": "string", "enum": ["available", "booked", "hidden"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "Booking": {
+      "title": "Booking",
+      "description": "Property booking request",
+      "type": "object",
+      "properties": {
+        "propertyId": { "type": "string" },
+        "ownerId": { "type": "string" },
+        "userId": { "type": "string" },
+        "startDate": { "type": "string", "format": "date" },
+        "status": { "type": "string", "enum": ["pending", "approved", "rejected", "cancelled"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "FoodPlan": {
+      "title": "Food Plan",
+      "description": "Meal subscription plan",
+      "type": "object",
+      "properties": {
+        "vendorId": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "price": { "type": "number" },
+        "frequency": { "type": "string", "enum": ["daily", "monthly"] },
+        "status": { "type": "string" }
+      }
+    },
+    "Appliance": {
+      "title": "Appliance",
+      "description": "Appliance for rent",
+      "type": "object",
+      "properties": {
+        "vendorId": { "type": "string" },
+        "name": { "type": "string" },
+        "type": { "type": "string" },
+        "monthlyRent": { "type": "number" },
+        "status": { "type": "string" }
+      }
+    },
+    "Service": {
+      "title": "Service",
+      "description": "Home service (cleaning, laundry, etc.)",
+      "type": "object",
+      "properties": {
+        "vendorId": { "type": "string" },
+        "name": { "type": "string" },
+        "category": { "type": "string" },
+        "price": { "type": "number" }
+      }
+    },
+    "ChatRoom": {
+      "title": "Chat Room",
+      "description": "Room for real-time messaging",
+      "type": "object",
+      "properties": {
+        "participants": { "type": "array" },
+        "lastMessage": { "type": "string" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "Message": {
+      "title": "Message",
+      "description": "Individual chat message",
+      "type": "object",
+      "properties": {
+        "roomId": { "type": "string" },
+        "senderId": { "type": "string" },
+        "text": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      }
+    }
+  },
+  "firestore": {
+    "users": { "schema": "User", "description": "User profiles" },
+    "properties": { "schema": "Property", "description": "Property listings" },
+    "bookings": { "schema": "Booking", "description": "Property bookings" },
+    "food_plans": { "schema": "FoodPlan", "description": "Food subscription plans" },
+    "appliances": { "schema": "Appliance", "description": "Appliances for rent" },
+    "services": { "schema": "Service", "description": "Home services" },
+    "chat_rooms": { "schema": "ChatRoom", "description": "Chat conversations" },
+    "chat_rooms/{roomId}/messages": { "schema": "Message", "description": "Messages within a room" }
+  }
+}

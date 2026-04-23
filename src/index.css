@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+@layer base {
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
+  
+  body {
+    @apply font-sans bg-[#0A0A0C] text-[#E4E4E7] antialiased;
+  }
+}
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  
+  --color-brand: #2563eb;
+  --color-surface: #14141A;
+  --color-surface-bright: #1C1C24;
+  --color-border: #27272A;
+  --color-header: #0D0D11;
+  --color-aside: #121216;
+}
+
+/* Custom Scrollbar for Dark Theme */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-[#0A0A0C];
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-zinc-800 rounded-full hover:bg-zinc-700 transition-colors;
+}
+
+/* Elegant Utilities */
+.card-elegant {
+  @apply bg-surface border border-border rounded-2xl p-6 transition-all duration-300;
+}
+
+.input-elegant {
+  @apply bg-[#1A1A20] border border-zinc-700 rounded-full py-2 px-10 text-sm focus:outline-none focus:border-brand text-white;
+}
