@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
-import { Shield, Home, Utensils, Wrench, Building2 } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
+import { Shield, Home, Utensils, Building2 } from 'lucide-react';
 
 export default function Login() {
   const { login } = useAuth();
@@ -71,9 +71,14 @@ export default function Login() {
           </button>
         </div>
 
-        <p className="text-[10px] text-zinc-600 pt-4 leading-relaxed uppercase font-medium">
-          By signing in, you agree to our Terms of Service <br /> and Privacy Policy.
-        </p>
+        <div className="pt-6 border-t border-border space-y-4">
+          <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest text-center">
+            New to SmartStay? <Link to="/register" className="text-brand hover:underline">Create an account</Link>
+          </p>
+          <p className="text-[10px] text-zinc-600 leading-relaxed uppercase font-medium">
+            By signing in, you agree to our Terms of Service <br /> and Privacy Policy.
+          </p>
+        </div>
       </div>
     </div>
   );

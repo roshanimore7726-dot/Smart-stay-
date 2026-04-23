@@ -460,8 +460,10 @@ export default function Dashboard() {
                   <div className="h-48 overflow-hidden relative">
                     <img src={p.images?.[0]} alt={p.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-80" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
-                    <div className="absolute bottom-4 left-6">
-                       <span className="bg-brand/20 backdrop-blur-sm text-brand px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest border border-brand/30">Active</span>
+                    <div className="absolute bottom-4 left-6 flex gap-2">
+                       <span className={`backdrop-blur-sm px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest border ${
+                         p.status === 'available' ? 'bg-emerald-500/20 text-emerald-500 border-emerald-500/30' : 'bg-zinc-500/20 text-zinc-500 border-zinc-500/30'
+                       }`}>{p.status === 'available' ? 'Active' : 'Hidden'}</span>
                     </div>
                   </div>
                   <div className="p-6 space-y-4">
@@ -472,6 +474,13 @@ export default function Dashboard() {
                     <div className="flex justify-between items-center border-t border-border pt-4">
                        <span className="font-black text-brand text-xl tracking-tighter italic">${p.price}</span>
                        <div className="flex gap-2">
+                         <button 
+                           onClick={() => handleUpdateStatus('properties', p.id, p.status === 'available' ? 'hidden' : 'available')}
+                           className={`p-2 transition-all ${p.status === 'available' ? 'text-zinc-600 hover:text-orange-500' : 'text-orange-500 hover:text-brand'}`}
+                           title={p.status === 'available' ? 'Hide Listing' : 'Show Listing'}
+                         >
+                           <RefreshCw size={18} />
+                         </button>
                          <button 
                            onClick={() => handleDelete('properties', p.id)}
                            className="p-2 text-zinc-600 hover:text-red-500 transition-all"
@@ -507,19 +516,32 @@ export default function Dashboard() {
               {data.foodPlans.map((f: any) => (
                 <div key={f.id} className="bg-surface p-8 rounded-3xl border border-border space-y-4 shadow-xl">
                   <div className="flex justify-between items-start">
-                    <h3 className="font-bold text-white uppercase tracking-tight">{f.name}</h3>
+                    <div className="space-y-1 text-left">
+                      <h3 className="font-bold text-white uppercase tracking-tight">{f.name}</h3>
+                      <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded ${
+                        f.status === 'available' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-zinc-500/10 text-zinc-500'
+                      }`}>{f.status}</span>
+                    </div>
                     <span className="text-brand font-black italic">${f.price}</span>
                   </div>
-                  <p className="text-xs text-zinc-500">{f.description}</p>
+                  <p className="text-xs text-zinc-500 text-left">{f.description}</p>
                   <div className="h-px bg-border w-full"></div>
                   <div className="flex justify-between items-center text-[10px] uppercase font-bold tracking-widest">
                     <span className="text-zinc-600">{f.frequency} SUB</span>
-                    <button 
-                      onClick={() => handleDelete('food_plans', f.id)}
-                      className="text-red-500 hover:underline"
-                    >
-                      Delete
-                    </button>
+                    <div className="flex gap-4">
+                      <button 
+                        onClick={() => handleUpdateStatus('food_plans', f.id, f.status === 'available' ? 'hidden' : 'available')}
+                        className="text-brand hover:underline"
+                      >
+                        Toggle Status
+                      </button>
+                      <button 
+                        onClick={() => handleDelete('food_plans', f.id)}
+                        className="text-red-500 hover:underline"
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -532,6 +554,7 @@ export default function Dashboard() {
                       <th className="p-4 text-xs font-bold text-zinc-600 uppercase tracking-widest text-left">Customer</th>
                       <th className="p-4 text-xs font-bold text-zinc-600 uppercase tracking-widest text-left">Plan</th>
                       <th className="p-4 text-xs font-bold text-zinc-600 uppercase tracking-widest text-left">Status</th>
+                      <th className="p-4 text-xs font-bold text-zinc-600 uppercase tracking-widest text-right">Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -540,7 +563,19 @@ export default function Dashboard() {
                         <td className="p-4 font-bold text-white text-sm">{s.userName}</td>
                         <td className="p-4 text-zinc-500 text-xs">{s.planName}</td>
                         <td className="p-4">
-                          <span className="px-2 py-1 bg-emerald-500/10 text-emerald-500 rounded text-[9px] font-bold uppercase">{s.status}</span>
+                          <span className={`px-2 py-1 rounded text-[9px] font-bold uppercase ${
+                            s.status === 'approved' ? 'bg-emerald-500/10 text-emerald-500' : 
+                            s.status === 'rejected' ? 'bg-red-500/10 text-red-500' : 
+                            'bg-brand/10 text-brand'
+                          }`}>{s.status}</span>
+                        </td>
+                        <td className="p-4 text-right">
+                          {s.status === 'pending' && (
+                            <div className="flex justify-end gap-2">
+                              <button onClick={() => handleUpdateStatus('food_subscriptions', s.id, 'approved')} className="p-1.5 hover:text-emerald-500 transition-colors"><Check size={16} /></button>
+                              <button onClick={() => handleUpdateStatus('food_subscriptions', s.id, 'rejected')} className="p-1.5 hover:text-red-500 transition-colors"><X size={16} /></button>
+                            </div>
+                          )}
                         </td>
                       </tr>
                     ))}
@@ -561,16 +596,61 @@ export default function Dashboard() {
                 <Plus size={16} /> Add Item
               </button>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
               {data.appliances.map((a: any) => (
-                <div key={a.id} className="bg-surface p-6 rounded-3xl border border-border space-y-4 shadow-xl text-center">
-                  <div className="w-16 h-16 bg-aside rounded-2xl flex items-center justify-center mx-auto text-brand border border-border">
-                    <Zap size={24} />
+                <div key={a.id} className="bg-surface p-6 rounded-3xl border border-border space-y-4 shadow-xl text-center group">
+                  <div className="relative">
+                    <div className="w-16 h-16 bg-aside rounded-2xl flex items-center justify-center mx-auto text-brand border border-border">
+                      <Zap size={24} />
+                    </div>
+                    <button 
+                      onClick={() => handleDelete('appliances', a.id)}
+                      className="absolute -top-2 -right-2 p-1 bg-red-500 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-all hover:scale-110"
+                    >
+                      <X size={12} />
+                    </button>
                   </div>
                   <h3 className="font-bold text-white text-sm uppercase">{a.name}</h3>
                   <div className="text-brand font-black">${a.monthlyRent}/mo</div>
                 </div>
               ))}
+            </div>
+
+            <h2 className="text-xl font-bold text-white tracking-tight mt-12 py-4 border-b border-border uppercase">Rental Requests</h2>
+            <div className="bg-surface rounded-3xl border border-border overflow-hidden">
+               <table className="w-full">
+                  <thead className="bg-[#1A1A20]">
+                    <tr>
+                      <th className="p-4 text-xs font-bold text-zinc-600 uppercase tracking-widest text-left">Customer</th>
+                      <th className="p-4 text-xs font-bold text-zinc-600 uppercase tracking-widest text-left">Item</th>
+                      <th className="p-4 text-xs font-bold text-zinc-600 uppercase tracking-widest text-left">Status</th>
+                      <th className="p-4 text-xs font-bold text-zinc-600 uppercase tracking-widest text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {data.applianceRentals.map((r: any) => (
+                      <tr key={r.id} className="border-t border-border">
+                        <td className="p-4 font-bold text-white text-sm">{r.userName}</td>
+                        <td className="p-4 text-zinc-500 text-xs">{r.itemName}</td>
+                        <td className="p-4">
+                          <span className={`px-2 py-1 rounded text-[9px] font-bold uppercase ${
+                            r.status === 'approved' ? 'bg-emerald-500/10 text-emerald-500' : 
+                            r.status === 'rejected' ? 'bg-red-500/10 text-red-500' : 
+                            'bg-brand/10 text-brand'
+                          }`}>{r.status}</span>
+                        </td>
+                        <td className="p-4 text-right">
+                          {r.status === 'pending' && (
+                            <div className="flex justify-end gap-2">
+                              <button onClick={() => handleUpdateStatus('appliance_rentals', r.id, 'approved')} className="p-1.5 hover:text-emerald-500 transition-colors"><Check size={16} /></button>
+                              <button onClick={() => handleUpdateStatus('appliance_rentals', r.id, 'rejected')} className="p-1.5 hover:text-red-500 transition-colors"><X size={16} /></button>
+                            </div>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+               </table>
             </div>
           </div>
         )}
@@ -594,6 +674,7 @@ export default function Dashboard() {
                       <th className="p-4 text-xs font-bold text-zinc-600 uppercase tracking-widest text-left">Service</th>
                       <th className="p-4 text-xs font-bold text-zinc-600 uppercase tracking-widest text-left">Date</th>
                       <th className="p-4 text-xs font-bold text-zinc-600 uppercase tracking-widest text-left">Status</th>
+                      <th className="p-4 text-xs font-bold text-zinc-600 uppercase tracking-widest text-right">Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -603,7 +684,19 @@ export default function Dashboard() {
                         <td className="p-4 text-zinc-500 text-xs">{s.serviceName}</td>
                         <td className="p-4 text-zinc-600 text-[10px] font-bold">{new Date(s.scheduledDate?.seconds * 1000).toLocaleDateString()}</td>
                         <td className="p-4">
-                          <span className="px-2 py-1 bg-orange-500/10 text-orange-500 rounded text-[9px] font-bold uppercase">{s.status}</span>
+                          <span className={`px-2 py-1 rounded text-[9px] font-bold uppercase ${
+                            s.status === 'approved' ? 'bg-emerald-500/10 text-emerald-500' : 
+                            s.status === 'rejected' ? 'bg-red-500/10 text-red-500' : 
+                            'bg-orange-500/10 text-orange-500'
+                          }`}>{s.status}</span>
+                        </td>
+                        <td className="p-4 text-right">
+                          {s.status === 'pending' && (
+                            <div className="flex justify-end gap-2">
+                              <button onClick={() => handleUpdateStatus('service_bookings', s.id, 'approved')} className="p-1.5 hover:text-emerald-500 transition-colors"><Check size={16} /></button>
+                              <button onClick={() => handleUpdateStatus('service_bookings', s.id, 'rejected')} className="p-1.5 hover:text-red-500 transition-colors"><X size={16} /></button>
+                            </div>
+                          )}
                         </td>
                       </tr>
                     ))}

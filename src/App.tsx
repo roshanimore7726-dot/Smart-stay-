@@ -10,6 +10,7 @@ import Layout from './components/Layout';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+import Register from './pages/Register';
 import Chat from './pages/Chat';
 import PropertyDetails from './pages/PropertyDetails';
 import FoodService from './pages/FoodService';
@@ -31,6 +32,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
             <Route path="/property/:id" element={<PropertyDetails />} />
             <Route path="/food-plans" element={<FoodService />} />
             <Route path="/appliances" element={<Appliances />} />
