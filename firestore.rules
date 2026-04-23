@@ -66,7 +66,7 @@ service cloud.firestore {
       }
     }
 
-    // --- Food, Appliances, Services ---
+    // --- Food, Appliances, Services (Marketplace Items) ---
     match /food_plans/{id} {
       allow read: if true;
       allow write: if hasRole('vendor') || isAdmin();
@@ -75,9 +75,34 @@ service cloud.firestore {
       allow read: if true;
       allow write: if hasRole('vendor') || isAdmin();
     }
-    match /services/{id} {
+    match /home_services/{id} {
       allow read: if true;
       allow write: if hasRole('vendor') || isAdmin();
+    }
+
+    // --- Marketplace Transactions (Subscriptions, Rentals, Bookings) ---
+    function isTransactionUser() { return isOwner(resource.data.userId); }
+    function isTransactionVendor() { return isOwner(resource.data.vendorId); }
+
+    match /food_subscriptions/{id} {
+      allow read: if isSignedIn() && (isTransactionUser() || isTransactionVendor() || isAdmin());
+      allow create: if isSignedIn() && request.auth.uid == request.resource.data.userId;
+      allow update: if isSignedIn() && (isTransactionVendor() || isAdmin());
+      allow delete: if isAdmin();
+    }
+
+    match /appliance_rentals/{id} {
+      allow read: if isSignedIn() && (isTransactionUser() || isTransactionVendor() || isAdmin());
+      allow create: if isSignedIn() && request.auth.uid == request.resource.data.userId;
+      allow update: if isSignedIn() && (isTransactionVendor() || isAdmin());
+      allow delete: if isAdmin();
+    }
+
+    match /service_bookings/{id} {
+      allow read: if isSignedIn() && (isTransactionUser() || isTransactionVendor() || isAdmin());
+      allow create: if isSignedIn() && request.auth.uid == request.resource.data.userId;
+      allow update: if isSignedIn() && (isTransactionVendor() || isAdmin());
+      allow delete: if isAdmin();
     }
   }
 }

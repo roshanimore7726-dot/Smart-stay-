@@ -6,14 +6,19 @@ import { Shield, Home, Utensils, Building2 } from 'lucide-react';
 export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const [isBusy, setIsBusy] = React.useState(false);
 
   const handleLogin = async (role: any) => {
+    if (isBusy) return;
+    setIsBusy(true);
     try {
       await login(role);
       navigate('/dashboard');
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      alert('Login failed. Please try again.');
+      alert(err.message || 'Login failed. Please try again.');
+    } finally {
+      setIsBusy(false);
     }
   };
 

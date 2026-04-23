@@ -107,8 +107,11 @@
     "properties": { "schema": "Property", "description": "Property listings" },
     "bookings": { "schema": "Booking", "description": "Property bookings" },
     "food_plans": { "schema": "FoodPlan", "description": "Food subscription plans" },
+    "food_subscriptions": { "schema": "object", "description": "User food subscriptions" },
     "appliances": { "schema": "Appliance", "description": "Appliances for rent" },
-    "services": { "schema": "Service", "description": "Home services" },
+    "appliance_rentals": { "schema": "object", "description": "User appliance rentals" },
+    "home_services": { "schema": "Service", "description": "Home services" },
+    "service_bookings": { "schema": "object", "description": "User home service bookings" },
     "chat_rooms": { "schema": "ChatRoom", "description": "Chat conversations" },
     "chat_rooms/{roomId}/messages": { "schema": "Message", "description": "Messages within a room" }
   }

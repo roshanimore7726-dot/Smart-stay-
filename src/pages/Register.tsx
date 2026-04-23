@@ -7,14 +7,19 @@ import { motion } from 'motion/react';
 export default function Register() {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const [isBusy, setIsBusy] = React.useState(false);
 
   const handleRegister = async (role: any) => {
+    if (isBusy) return;
+    setIsBusy(true);
     try {
       await login(role);
       navigate('/dashboard');
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      alert('Registration failed. Please try again.');
+      alert(err.message || 'Registration failed. Please try again.');
+    } finally {
+      setIsBusy(false);
     }
   };
 
